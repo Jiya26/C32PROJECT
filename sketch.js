@@ -9,15 +9,23 @@ var block8,block9,block10,block11,block12;
 var block13,block14,block15,block16;
 var box1,box2,box3,box4,box5;
 var box6,box7,box8,box9;
-var polygon;
+var polygon,polygonImg;
 var slingShot;
 
+function preload(){
+     polygonImg=loadImage("polygonImg.png")
+}
+
 function setup() {
-  var canvas = createCanvas(1200,700);
+  var canvas = createCanvas(1200,1000);
 
   
 	engine = Engine.create();
   world = engine.world;
+  
+  polygon = Bodies.circle(100,400,25,{density:1.5});
+  World.add(world,polygon);
+  
   
   ground = new Ground(400,600,249,15);
   block1 = new BoxClass(430,580,35,50);
@@ -49,9 +57,10 @@ function setup() {
   box9 = new BoxClass(800,320,35,50)
 
 
- //slingShot = new slingShot(polygon,{x:100,y:200});
-
+ slingShot = new SlingShot(polygon,{x:100,y:350});
   Engine.run(engine);
+
+
 }
 
 function draw() {
@@ -84,13 +93,24 @@ function draw() {
   box7.display();
   box8.display();
   box9.display();
-  
-  polygon();
+  slingShot.display();
+  fill("white");
+  text("Drag The Polygon To Destroy The Blocks",200,20);
+  text("Press Space for second chance",1000,500);
+
+  image(polygonImg,polygon.position.x,polygon.position.y,50,50)
   drawSprites();
 }
-
-function polygon(){
-  
-  var polygon = Bodies.circle(100,100,10);
- World.add(world,polygon);
+function mouseDragged(){
+  Matter.Body.setPosition(polygon,{x: mouseX , y: mouseY});
+}
+function mouseReleased(){
+  slingShot.fly();
+}
+function keyPressed(){
+  if(keyCode===32){
+    Matter.Body.setPosition(polygon,{x:100,y:350});
+    slingShot.attach(polygon);
+    
+  }
 }
